@@ -1,9 +1,26 @@
 from django.shortcuts import render, redirect
 from .models import Product,Customer, Order
-from .forms import OrderForm
+from .forms import OrderForm, CreateUserForm
 from django.forms import inlineformset_factory
 from .filters import OrderFilter
+from django.contrib.auth.forms import UserCreationForm
 # Create your views here.
+
+
+
+def register(request):
+    form = CreateUserForm()
+    if request.method =="POST":
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("login")
+    return render(request,"accounts/register.html",{"form":form})
+
+
+def log_in(request):
+    return render(request,"accounts/login.html",{})
+
 
 
 def homepage(request):
@@ -15,6 +32,7 @@ def homepage(request):
     total_orders = orders.count()
     delivered = orders.filter(status="Delivered").count()
     orders_pending = orders.filter(status="Pending").count()
+    orders = orders[:5]
     context = {"orders":orders,"customers": customers,"products":product,"title":title,"customer_count":total_customers,"order_count":total_orders,"pending":orders_pending,"delivered":delivered}
     return render(request, 'accounts/dashboard.html', context)
 
@@ -65,13 +83,14 @@ def update_order(request, pk):
     order = Order.objects.get(id=pk)
     form = OrderForm(instance=order)
     context={"form":form}
+    print(context)
     if request.method=="POST":
         print(request.POST)
         form=OrderForm(request.POST,instance=order)
         if form.is_valid():
             form.save()
             return redirect("home")
-    return render(request, "accounts/order_form.html", context)
+    return render(request, "accounts/order_update.html", context)
 
 
 
