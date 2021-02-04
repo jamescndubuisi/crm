@@ -1,9 +1,10 @@
 from django.urls import path
-from . views import homepage,log_in, register, products, customer_data, customer_list, create_order, update_order, delete_order
+from . views import homepage,log_in,log_out, register, products, customer_data, customer_list, create_order, update_order, delete_order
 
 urlpatterns = [
     path('', homepage, name = "home"),
     path('login/', log_in, name = "login"),
+    path('logout/', log_out, name = "logout"),
     path('register/', register, name = "register"),
     path('products', products, name = "products"),
     path('customers', customer_list, name = "customers"),
